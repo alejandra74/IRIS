@@ -10,12 +10,6 @@ import mediapipe as mp
 import cv2
 import math
 
-# Read the image
-# image = cv2.imread("D:/Documentos/ACRM/Alejandra/test_project/input/test11.jpeg")
-# Show the image
-# cv2.imshow('image', image)
-# cv2.waitKey(0)
-
 # Adjust contrast image
 # image = cv2.addWeighted(image, 2.5, np.zeros(image.shape, image.dtype), 0, 0)
 # cv2.imshow('image', image)
