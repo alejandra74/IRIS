@@ -64,7 +64,6 @@ else:
 modnet.load_state_dict(weights)
 modnet.eval()
 
-
 # Calculate landmarks in frontal position
 def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
     # inference images
@@ -164,28 +163,28 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                     y = []
 
                     x_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x]
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x]
 
                     y_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y]
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].y]
 
                     if results.pose_landmarks is not None:
                         for i in range(len(x_lmark)):
@@ -203,10 +202,6 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                         # create empty arrays to save landmark extern points
                         d = []
                         e = []
-                        # f = []
-                        # g = []
-                        # h = []
-                        # k = []
 
                         for i in range(len(c)):
                             for j in range(len(y)):
@@ -225,27 +220,18 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
 
                         image3 = im_name2.copy()
-                        # image4 = im_name2.copy()
-                        # image5 = im_name2.copy()
+
                         for i in range(len(d)):
                             cv2.circle(image3, (d[i], e[i]), 3, (128, 0, 0), -1)
 
                         cv2.circle(image3, extTop, 3, (255, 0, 0), -1)  # blue
                         cv2.circle(image3, extBot, 3, (255, 255, 0), -1)  # light blue
 
-                        # for i in range(len(f)):
-                        #    cv2.circle(image3, (f[i], g[i]), 5, (128, 0, 0), -1)
 
-                        # for i in range(len(h)):
-                        #    cv2.circle(image3, (h[i], k[i]), 5, (128, 0, 0), -1)
-                        # cv2.imshow('Image4', image4)
-                        # cv2.waitKey(0)
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
-                        # land_name_2 = str(inp_name) + '_landmark_2' + '.jpeg'
-                        # land_name_3 = str(inp_name) + '_landmark_3' + '.jpeg'
+
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-                        # cv2.imwrite(os.path.join(d_landmark, land_name_2), image4)
-                        # cv2.imwrite(os.path.join(d_landmark, land_name_3), image5)
+
                         # cv2.imshow('Image3', image3)
                         # cv2.waitKey(0)
 
@@ -349,28 +335,28 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                     y = []
 
                     x_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x]
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x]
 
                     y_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y]
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].y]
 
                     if results.pose_landmarks is not None:
                         for i in range(len(x_lmark)):
@@ -388,10 +374,7 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                         # create empty arrays to save landmark extern points
                         d = []
                         e = []
-                        # f = []
-                        # g = []
-                        # h = []
-                        # k = []
+
                         for i in range(len(c)):
                             for j in range(len(y)):
                                 if y_contour[i][0] == y[j]:
@@ -409,8 +392,7 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
 
                         image3 = im_name2.copy()
-                        # image4 = im_name2.copy()
-                        # image5 = im_name2.copy()
+
 
                         for i in range(len(d)):
                             cv2.circle(image3, (d[i], e[i]), 3, (128, 0, 0), -1)
@@ -422,12 +404,8 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                         # cv2.waitKey(0)
 
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
-                        # land_name_2 = str(inp_name) + '_landmark_2' + '.jpeg'
-                        # land_name_3 = str(inp_name) + '_landmark_3' + '.jpeg'
 
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-                        # cv2.imwrite(os.path.join(d_landmark, land_name_2), image4)
-                        # cv2.imwrite(os.path.join(d_landmark, land_name_3), image5)
                         # cv2.imshow('Image3', image3)
                         # cv2.waitKey(0)
 
@@ -531,24 +509,24 @@ def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
                     y = []
 
                     x_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x]
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].x]
 
                     y_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y]
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].y]
 
                     if results.pose_landmarks is not None:
                         for i in range(len(x_lmark)):
@@ -567,10 +545,6 @@ def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
                         # create empty arrays to save landmark extern points
                         d = []
                         e = []
-                        # f = []
-                        # g = []
-                        # h = []
-                        # k = []
 
                         for i in range(len(c)):
                             for j in range(len(y)):
@@ -911,13 +885,13 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
                     y = []
 
                     x_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].x,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].x]
 
                     y_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y,
-                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y,
+                               results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].y]
 
                     if results.pose_landmarks is not None:
@@ -937,10 +911,6 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
                         # create empty arrays to save landmark extern points
                         d = []
                         e = []
-                        # f = []
-                        # g = []
-                        # h = []
-                        # k = []
 
                         for i in range(len(c)):
                             for j in range(len(y)):
