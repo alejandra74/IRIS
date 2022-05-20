@@ -58,60 +58,14 @@ else:
 modnet.load_state_dict(weights)
 modnet.eval()
 
+
 # Calculate landmarks in frontal position
 def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
     # inference images
-    im_names = os.listdir(d_input)
-    for im_name in im_names:
-        print('Process image: {0}'.format(im_name))
-
-        # read image
-        im = Image.open(os.path.join(d_input, im_name))
-
-        # unify image channels to 3
-        im = np.asarray(im)
-        if len(im.shape) == 2:
-            im = im[:, :, None]
-        if im.shape[2] == 1:
-            im = np.repeat(im, 3, axis=2)
-        elif im.shape[2] == 4:
-            im = im[:, :, 0:3]
-
-        # convert image to PyTorch tensor
-        im = Image.fromarray(im)
-        im = im_transform(im)
-
-        # add mini-batch dim
-        im = im[None, :, :, :]
-
-        # resize image for input
-        im_b, im_c, im_h, im_w = im.shape
-        if max(im_h, im_w) < ref_size or min(im_h, im_w) > ref_size:
-            if im_w >= im_h:
-                im_rh = ref_size
-                im_rw = int(im_w / im_h * ref_size)
-            elif im_w < im_h:
-                im_rw = ref_size
-                im_rh = int(im_h / im_w * ref_size)
-        else:
-            im_rh = im_h
-            im_rw = im_w
-
-        im_rw = im_rw - im_rw % 64
-        im_rh = im_rh - im_rh % 64
-        im = F.interpolate(im, size=(im_rh, im_rw), mode='area')
-
-        # inference
-        _, _, matte = modnet(im.cuda() if torch.cuda.is_available() else im, True)
-
-        # resize and save matte
-        matte = F.interpolate(matte, size=(im_h, im_w), mode='area')
-        matte = matte[0][0].data.cpu().numpy()
-        matte_name = im_name.split('.')[0] + '.png'
-        Image.fromarray(((matte * 255).astype('uint8')), mode='L').save(
-            os.path.join(d_output, matte_name))
+    from output_generator import output_generator
     # Extract list of objects inside output
-    output_list = os.listdir(d_output)
+    output_list = output_generator(modnet, ref_size, d_input, d_output, im_transform)
+
     for im_output in output_list:
         print('Process output image: {0}'.format(im_output))
         # read image
@@ -221,7 +175,6 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                         cv2.circle(image3, extTop, 3, (255, 0, 0), -1)  # blue
                         cv2.circle(image3, extBot, 3, (255, 255, 0), -1)  # light blue
 
-
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
 
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
@@ -233,57 +186,10 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
 # Calculate landmarks in costa position
 def Calculate_landmarks_costa(d_input, d_output, d_landmark):
     # inference images
-    im_names = os.listdir(d_input)
-    for im_name in im_names:
-        print('Process image: {0}'.format(im_name))
-
-        # read image
-        im = Image.open(os.path.join(d_input, im_name))
-
-        # unify image channels to 3
-        im = np.asarray(im)
-        if len(im.shape) == 2:
-            im = im[:, :, None]
-        if im.shape[2] == 1:
-            im = np.repeat(im, 3, axis=2)
-        elif im.shape[2] == 4:
-            im = im[:, :, 0:3]
-
-        # convert image to PyTorch tensor
-        im = Image.fromarray(im)
-        im = im_transform(im)
-
-        # add mini-batch dim
-        im = im[None, :, :, :]
-
-        # resize image for input
-        im_b, im_c, im_h, im_w = im.shape
-        if max(im_h, im_w) < ref_size or min(im_h, im_w) > ref_size:
-            if im_w >= im_h:
-                im_rh = ref_size
-                im_rw = int(im_w / im_h * ref_size)
-            elif im_w < im_h:
-                im_rw = ref_size
-                im_rh = int(im_h / im_w * ref_size)
-        else:
-            im_rh = im_h
-            im_rw = im_w
-
-        im_rw = im_rw - im_rw % 64
-        im_rh = im_rh - im_rh % 64
-        im = F.interpolate(im, size=(im_rh, im_rw), mode='area')
-
-        # inference
-        _, _, matte = modnet(im.cuda() if torch.cuda.is_available() else im, True)
-
-        # resize and save matte
-        matte = F.interpolate(matte, size=(im_h, im_w), mode='area')
-        matte = matte[0][0].data.cpu().numpy()
-        matte_name = im_name.split('.')[0] + '.png'
-        Image.fromarray(((matte * 255).astype('uint8')), mode='L').save(
-            os.path.join(d_output, matte_name))
+    from output_generator import output_generator
     # Extract list of objects inside output
-    output_list = os.listdir(d_output)
+    output_list = output_generator(modnet, ref_size, d_input, d_output, im_transform)
+
     for im_output in output_list:
         print('Process output image: {0}'.format(im_output))
         # read image
@@ -386,7 +292,6 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
 
                         image3 = im_name2.copy()
-
 
                         for i in range(len(d)):
                             cv2.circle(image3, (d[i], e[i]), 3, (128, 0, 0), -1)
@@ -407,57 +312,10 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
 # Calculate landmarks in frontal position with cross arms
 def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
     # inference images
-    im_names = os.listdir(d_input)
-    for im_name in im_names:
-        print('Process image: {0}'.format(im_name))
-
-        # read image
-        im = Image.open(os.path.join(d_input, im_name))
-
-        # unify image channels to 3
-        im = np.asarray(im)
-        if len(im.shape) == 2:
-            im = im[:, :, None]
-        if im.shape[2] == 1:
-            im = np.repeat(im, 3, axis=2)
-        elif im.shape[2] == 4:
-            im = im[:, :, 0:3]
-
-        # convert image to PyTorch tensor
-        im = Image.fromarray(im)
-        im = im_transform(im)
-
-        # add mini-batch dim
-        im = im[None, :, :, :]
-
-        # resize image for input
-        im_b, im_c, im_h, im_w = im.shape
-        if max(im_h, im_w) < ref_size or min(im_h, im_w) > ref_size:
-            if im_w >= im_h:
-                im_rh = ref_size
-                im_rw = int(im_w / im_h * ref_size)
-            elif im_w < im_h:
-                im_rw = ref_size
-                im_rh = int(im_h / im_w * ref_size)
-        else:
-            im_rh = im_h
-            im_rw = im_w
-
-        im_rw = im_rw - im_rw % 64
-        im_rh = im_rh - im_rh % 64
-        im = F.interpolate(im, size=(im_rh, im_rw), mode='area')
-
-        # inference
-        _, _, matte = modnet(im.cuda() if torch.cuda.is_available() else im, True)
-
-        # resize and save matte
-        matte = F.interpolate(matte, size=(im_h, im_w), mode='area')
-        matte = matte[0][0].data.cpu().numpy()
-        matte_name = im_name.split('.')[0] + '.png'
-        Image.fromarray(((matte * 255).astype('uint8')), mode='L').save(
-            os.path.join(d_output, matte_name))
+    from output_generator import output_generator
     # Extract list of objects inside output
-    output_list = os.listdir(d_output)
+    output_list = output_generator(modnet, ref_size, d_input, d_output, im_transform)
+
     for im_output in output_list:
         print('Process output image: {0}'.format(im_output))
         # read image
@@ -576,65 +434,15 @@ def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
 # Calculate landmarks in right lateral position
 def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
     # inference images
-    im_names = os.listdir(d_input)
-    for im_name in im_names:
-        print('Process image: {0}'.format(im_name))
-
-        # read image
-        im = Image.open(os.path.join(d_input, im_name))
-
-        # unify image channels to 3
-        im = np.asarray(im)
-        if len(im.shape) == 2:
-            im = im[:, :, None]
-        if im.shape[2] == 1:
-            im = np.repeat(im, 3, axis=2)
-        elif im.shape[2] == 4:
-            im = im[:, :, 0:3]
-
-        # convert image to PyTorch tensor
-        im = Image.fromarray(im)
-        im = im_transform(im)
-
-        # add mini-batch dim
-        im = im[None, :, :, :]
-
-        # resize image for input
-        im_b, im_c, im_h, im_w = im.shape
-        if max(im_h, im_w) < ref_size or min(im_h, im_w) > ref_size:
-            if im_w >= im_h:
-                im_rh = ref_size
-                im_rw = int(im_w / im_h * ref_size)
-            elif im_w < im_h:
-                im_rw = ref_size
-                im_rh = int(im_h / im_w * ref_size)
-        else:
-            im_rh = im_h
-            im_rw = im_w
-
-        im_rw = im_rw - im_rw % 64
-        im_rh = im_rh - im_rh % 64
-        im = F.interpolate(im, size=(im_rh, im_rw), mode='area')
-
-        # inference
-        _, _, matte = modnet(im.cuda() if torch.cuda.is_available() else im, True)
-
-        # resize and save matte
-        matte = F.interpolate(matte, size=(im_h, im_w), mode='area')
-        matte = matte[0][0].data.cpu().numpy()
-        matte_name = im_name.split('.')[0] + '.png'
-        Image.fromarray(((matte * 255).astype('uint8')), mode='L').save(
-            os.path.join(d_output, matte_name))
+    from output_generator import output_generator
     # Extract list of objects inside output
-    output_list = os.listdir(d_output)
+    output_list = output_generator(modnet, ref_size, d_input, d_output, im_transform)
 
     for im_output in output_list:
         print('Process output image: {0}'.format(im_output))
         # read image
         mask2 = cv2.imread(os.path.join(d_output, im_output))
         mask_output = cv2.cvtColor(mask2, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('Mask2', mask_output)
-        # cv2.waitKey(0)
 
         # find contours in thresholded image, then grab the largest one
         cnts = cv2.findContours(mask_output, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -675,7 +483,6 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].x]
-
                     y_lmark = [results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y,
                                results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y,
@@ -691,7 +498,6 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
 
                         # cv2.imshow('Image landmarks', image2)
                         # cv2.waitKey(0)
-
                         x_contour = c[:, :, 0]
                         y_contour = c[:, :, 1]
 
@@ -711,51 +517,11 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
                                     d.append(x_contour[j][0])
                                     e.append(y_contour[j][0])
 
-                        # create matrix that save coord points of countor that match each body part
-                        matrix_x = [[] for _ in range(len(x))]
-                        matrix_y = [[] for _ in range(len(y))]
-                        for i in range(len(y)):
-                            for j in range(len(e)):
-                                if y[i] == e[j] or y[i] + 1 == e[j] or y[i] - 1 == e[j]:
-                                    matrix_y[i].append(e[j])
-                                    matrix_x[i].append(d[j])
-                        # create matrix with elements from matrix_x and matrix_y
-                        matrix = [[] for _ in range(len(matrix_x))]
-                        for i in range(len(matrix_x)):
-                            for j in range(len(matrix_x[i])):
-                                matrix[i].append((matrix_x[i][j], matrix_y[i][j]))
+                        from Matrix_generator import matrix_generator
+                        (matrix, matrix_x, matrix_y) = matrix_generator(x, y, e, d)
 
-                        # Calculate mean distance between points
-                        # import packages
-                        from itertools import permutations
-                        from scipy.spatial import distance as dist
-                        # create landmark distance matrix
-                        d_landmk = [[] for _ in range(len(matrix_x))]
-                        # create array for mean distance
-                        media = []
-                        for i in range(len(matrix_x)):
-                            if len(matrix[i]) != 0:
-                                permut = permutations(matrix[i], 2)
-                                b = list(permut)
-                                n = len(matrix[i])
-                                if n != 1:
-                                    for k in range(n * (n - 1)):
-                                        d_landmk[i].append(dist.euclidean(b[k][0], b[k][1]))
-                                    arr = np.asarray(d_landmk[i]).reshape(n, n - 1)
-                                    iu = np.triu_indices(n - 1)
-                                    arr2 = []
-                                    for j in arr[iu]:
-                                        if j > 10:
-                                            arr2.append(j)
-                                    if not arr2 == []:
-                                        a = np.mean(arr2)
-                                        media.append(a)
-                                    else:
-                                        media.append(0)
-                            else:
-                                d_landmk[i].append(0)
-                                media.append(0)
-
+                        from Distances import mean_distance
+                        media = mean_distance(matrix_x, matrix)
                         print(media)
 
                         # extreme points for height
@@ -771,68 +537,16 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
 
                         # cv2.imshow('Image4', image4)
                         # cv2.waitKey(0)
-
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
-
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-                        # cv2.imshow('Image3', image3)
-                        # cv2.waitKey(0)
 
 
 # Calculate landmarks in left lateral position
 def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
     # inference images
-    im_names = os.listdir(d_input)
-    for im_name in im_names:
-        print('Process image: {0}'.format(im_name))
-
-        # read image
-        im = Image.open(os.path.join(d_input, im_name))
-
-        # unify image channels to 3
-        im = np.asarray(im)
-        if len(im.shape) == 2:
-            im = im[:, :, None]
-        if im.shape[2] == 1:
-            im = np.repeat(im, 3, axis=2)
-        elif im.shape[2] == 4:
-            im = im[:, :, 0:3]
-
-        # convert image to PyTorch tensor
-        im = Image.fromarray(im)
-        im = im_transform(im)
-
-        # add mini-batch dim
-        im = im[None, :, :, :]
-
-        # resize image for input
-        im_b, im_c, im_h, im_w = im.shape
-        if max(im_h, im_w) < ref_size or min(im_h, im_w) > ref_size:
-            if im_w >= im_h:
-                im_rh = ref_size
-                im_rw = int(im_w / im_h * ref_size)
-            elif im_w < im_h:
-                im_rw = ref_size
-                im_rh = int(im_h / im_w * ref_size)
-        else:
-            im_rh = im_h
-            im_rw = im_w
-
-        im_rw = im_rw - im_rw % 64
-        im_rh = im_rh - im_rh % 64
-        im = F.interpolate(im, size=(im_rh, im_rw), mode='area')
-
-        # inference
-        _, _, matte = modnet(im.cuda() if torch.cuda.is_available() else im, True)
-
-        # resize and save matte
-        matte = F.interpolate(matte, size=(im_h, im_w), mode='area')
-        matte = matte[0][0].data.cpu().numpy()
-        matte_name = im_name.split('.')[0] + '.png'
-        Image.fromarray(((matte * 255).astype('uint8')), mode='L').save(
-            os.path.join(d_output, matte_name))
+    from output_generator import output_generator
     # Extract list of objects inside output
-    output_list = os.listdir(d_output)
+    output_list = output_generator(modnet, ref_size, d_input, d_output, im_transform)
 
     for im_output in output_list:
         print('Process output image: {0}'.format(im_output))
