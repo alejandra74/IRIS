@@ -71,8 +71,6 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
         # read image
         mask2 = cv2.imread(os.path.join(d_output, im_output))
         mask_output = cv2.cvtColor(mask2, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('Mask2', mask_output)
-        # cv2.waitKey(0)
 
         # find contours in thresholded image, then grab the largest one
         cnts = cv2.findContours(mask_output, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -91,8 +89,6 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                 im_name2 = cv2.imread(os.path.join(d_input, im_name2))
                 image_contour = im_name2.copy()
                 cv2.drawContours(image_contour, [c], -1, (0, 255, 255), 2)
-                # cv2.imshow('Contour image', image_contour)
-                # cv2.waitKey(0)
 
                 mp_pose = mp.solutions.pose
                 mp_drawing = mp.solutions.drawing_utils
@@ -141,8 +137,6 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
 
                         for t in range(len(x)):
                             cv2.circle(image2, (int(x[t]), int(y[t])), 3, (0, 0, 255), -1)
-                        # cv2.imshow('Image landmarks', image2)
-                        # cv2.waitKey(0)
 
                         x_contour = c[:, :, 0]
                         y_contour = c[:, :, 1]
@@ -162,6 +156,12 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                                 elif y_contour[i][0] - 1 == y[j]:
                                     d.append(x_contour[i][0])
                                     e.append(y_contour[i][0])
+                        from Matrix_generator import matrix_generator
+                        (matrix, matrix_x, matrix_y) = matrix_generator(x, y, e, d)
+
+                        from Distances import mean_distance
+                        media = mean_distance(matrix_x, matrix)
+                        print(media)
 
                         # extreme points for height
                         extTop = tuple(c[c[:, :, 1].argmin()][0])
@@ -176,12 +176,7 @@ def Calculate_landmarks_frontal(d_input, d_output, d_landmark):
                         cv2.circle(image3, extBot, 3, (255, 255, 0), -1)  # light blue
 
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
-
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-
-                        # cv2.imshow('Image3', image3)
-                        # cv2.waitKey(0)
-
 
 # Calculate landmarks in costa position
 def Calculate_landmarks_costa(d_input, d_output, d_landmark):
@@ -195,8 +190,6 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
         # read image
         mask2 = cv2.imread(os.path.join(d_output, im_output))
         mask_output = cv2.cvtColor(mask2, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('Mask2', mask_output)
-        # cv2.waitKey(0)
 
         # find contours in thresholded image, then grab the largest one
         cnts = cv2.findContours(mask_output, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -215,8 +208,6 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                 im_name2 = cv2.imread(os.path.join(d_input, im_name2))
                 image_contour = im_name2.copy()
                 cv2.drawContours(image_contour, [c], -1, (0, 255, 255), 2)
-                # cv2.imshow('Contour image', image_contour)
-                # cv2.waitKey(0)
 
                 mp_pose = mp.solutions.pose
                 mp_drawing = mp.solutions.drawing_utils
@@ -287,6 +278,13 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                                     d.append(x_contour[i][0])
                                     e.append(y_contour[i][0])
 
+                        from Matrix_generator import matrix_generator
+                        (matrix, matrix_x, matrix_y) = matrix_generator(x, y, e, d)
+
+                        from Distances import mean_distance
+                        media = mean_distance(matrix_x, matrix)
+                        print(media)
+
                         # extreme points for height
                         extTop = tuple(c[c[:, :, 1].argmin()][0])
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
@@ -299,15 +297,8 @@ def Calculate_landmarks_costa(d_input, d_output, d_landmark):
                         cv2.circle(image3, extTop, 3, (255, 0, 0), -1)  # blue
                         cv2.circle(image3, extBot, 3, (255, 255, 0), -1)  # light blue
 
-                        # cv2.imshow('Image4', image4)
-                        # cv2.waitKey(0)
-
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
-
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-                        # cv2.imshow('Image3', image3)
-                        # cv2.waitKey(0)
-
 
 # Calculate landmarks in frontal position with cross arms
 def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
@@ -388,9 +379,6 @@ def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
                         for t in range(len(x)):
                             cv2.circle(image2, (int(x[t]), int(y[t])), 3, (0, 0, 255), -1)
 
-                        # cv2.imshow('Image landmarks', image2)
-                        # cv2.waitKey(0)
-
                         x_contour = c[:, :, 0]
                         y_contour = c[:, :, 1]
 
@@ -410,13 +398,18 @@ def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
                                     d.append(x_contour[i][0])
                                     e.append(y_contour[i][0])
 
+                        from Matrix_generator import matrix_generator
+                        (matrix, matrix_x, matrix_y) = matrix_generator(x, y, e, d)
+
+                        from Distances import mean_distance
+                        media = mean_distance(matrix_x, matrix)
+                        print(media)
+
                         # extreme points for height
                         extTop = tuple(c[c[:, :, 1].argmin()][0])
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
 
                         image3 = im_name2.copy()
-                        # image4 = im_name2.copy()
-                        # image5 = im_name2.copy()
 
                         for i in range(len(d)):
                             cv2.circle(image3, (d[i], e[i]), 3, (128, 0, 0), -1)
@@ -426,10 +419,6 @@ def Calculate_landmarks_frontal_cruz(d_input, d_output, d_landmark):
 
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-
-                        # cv2.imshow('Image3', image3)
-                        # cv2.waitKey(0)
-
 
 # Calculate landmarks in right lateral position
 def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
@@ -443,17 +432,15 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
         # read image
         mask2 = cv2.imread(os.path.join(d_output, im_output))
         mask_output = cv2.cvtColor(mask2, cv2.COLOR_BGR2GRAY)
-
-        # find contours in thresholded image, then grab the largest one
+        # find contours in threshold image, then grab the largest one
         cnts = cv2.findContours(mask_output, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
         c = max(cnts, key=cv2.contourArea)
-
         # Extract output file name
         out_name, out_ext = os.path.splitext(os.path.basename(os.path.join(d_output, im_output)))
         # Extract list of objects inside input
         im_names2 = os.listdir(d_input)
-
+        results = []
         for im_name2 in im_names2:
             # Extract input file name
             inp_name, inp_ext = os.path.splitext(os.path.basename(os.path.join(d_input, im_name2)))
@@ -495,9 +482,6 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
 
                         for t in range(len(x)):
                             cv2.circle(image2, (int(x[t]), int(y[t])), 3, (0, 0, 255), -1)
-
-                        # cv2.imshow('Image landmarks', image2)
-                        # cv2.waitKey(0)
                         x_contour = c[:, :, 0]
                         y_contour = c[:, :, 1]
 
@@ -516,17 +500,26 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
                                 if y[i] == y_contour[j][0] - 1:
                                     d.append(x_contour[j][0])
                                     e.append(y_contour[j][0])
-
+                        # create matrix that save coord points of countor that match each body part
                         from Matrix_generator import matrix_generator
                         (matrix, matrix_x, matrix_y) = matrix_generator(x, y, e, d)
 
+                        # Calculate mean distance between points
                         from Distances import mean_distance
                         media = mean_distance(matrix_x, matrix)
-                        print(media)
+                        print(type(media))
+
+                        # import csv
+                        # with open('lateraldireito.csv', 'w', newline='') as file:
+                        #     writer = csv.writer(file, delimiter=',')
+                        #     writer.writerows(media)
 
                         # extreme points for height
                         extTop = tuple(c[c[:, :, 1].argmin()][0])
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
+
+                        from scipy.spatial import distance as dist
+                        RefObj = dist.euclidean(extTop, extBot)
 
                         image3 = im_name2.copy()
                         for i in range(len(d)):
@@ -535,8 +528,6 @@ def Calculate_landmarks_lateral1(d_input, d_output, d_landmark):
                         cv2.circle(image3, extTop, 5, (255, 0, 0), -1)  # blue
                         cv2.circle(image3, extBot, 5, (255, 255, 0), -1)  # light blue
 
-                        # cv2.imshow('Image4', image4)
-                        # cv2.waitKey(0)
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
 
@@ -553,8 +544,6 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
         # read image
         mask2 = cv2.imread(os.path.join(d_output, im_output))
         mask_output = cv2.cvtColor(mask2, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('Mask2', mask_output)
-        # cv2.waitKey(0)
 
         # find contours in thresholded image, then grab the largest one
         cnts = cv2.findContours(mask_output, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -573,8 +562,6 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
                 im_name2 = cv2.imread(os.path.join(d_input, im_name2))
                 image_contour = im_name2.copy()
                 cv2.drawContours(image_contour, [c], -1, (0, 255, 255), 2)
-                # cv2.imshow('Contour image', image_contour)
-                # cv2.waitKey(0)
 
                 mp_pose = mp.solutions.pose
                 mp_drawing = mp.solutions.drawing_utils
@@ -610,9 +597,6 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
                         for t in range(len(x)):
                             cv2.circle(image2, (int(x[t]), int(y[t])), 3, (0, 0, 255), -1)
 
-                        # cv2.imshow('Image landmarks', image2)
-                        # cv2.waitKey(0)
-
                         x_contour = c[:, :, 0]
                         y_contour = c[:, :, 1]
 
@@ -632,6 +616,13 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
                                     d.append(x_contour[i][0])
                                     e.append(y_contour[i][0])
 
+                        from Matrix_generator import matrix_generator
+                        (matrix, matrix_x, matrix_y) = matrix_generator(x, y, e, d)
+
+                        from Distances import mean_distance
+                        media = mean_distance(matrix_x, matrix)
+                        print(media)
+
                         # extreme points for height
                         extTop = tuple(c[c[:, :, 1].argmin()][0])
                         extBot = tuple(c[c[:, :, 1].argmax()][0])
@@ -644,15 +635,8 @@ def Calculate_landmarks_lateral2(d_input, d_output, d_landmark):
                         cv2.circle(image3, extTop, 5, (255, 0, 0), -1)  # blue
                         cv2.circle(image3, extBot, 5, (255, 255, 0), -1)  # light blue
 
-                        # cv2.imshow('Image4', image4)
-                        # cv2.waitKey(0)
-
                         land_name = str(inp_name) + '_landmark' + '.jpeg'
-
                         cv2.imwrite(os.path.join(d_landmark, land_name), image3)
-
-                        # cv2.imshow('Image3', image3)
-                        # cv2.waitKey(0)
 
 
 frontal_input_directory = 'D:/Documentos/ACRM/Alejandra/test_project/Amostras/Frontal'
@@ -676,10 +660,8 @@ lateral2_output_directory = 'D:/Documentos/ACRM/Alejandra/test_project/output/La
 lateral2_landmark_directory = 'D:/Documentos/ACRM/Alejandra/test_project/landmarks/Lat_Esquerda'
 
 # Calculate_landmarks_frontal(frontal_input_directory, frontal_output_directory, frontal_landmark_directory)
-
-
 # Calculate_landmarks_frontal_cruz(frontal_cross_input_directory, frontal_cross_output_directory,
-#                                 frontal_cross_landmark_directory)
+#                                  frontal_cross_landmark_directory)
 # Calculate_landmarks_costa(costa_input_directory, costa_output_directory, costa_landmark_directory)
 Calculate_landmarks_lateral1(lateral1_input_directory, lateral1_output_directory, lateral1_landmark_directory)
 # Calculate_landmarks_lateral2(lateral2_input_directory, lateral2_output_directory, lateral2_landmark_directory)
