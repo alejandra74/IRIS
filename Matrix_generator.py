@@ -1,5 +1,5 @@
-def matrix_generator(x,y,e,d):
-    # create matrix that save coord points of countor that match each body part
+def matrix_generator(x, y, e, d):
+    # create matrix that save coord points of contour that match each body part
     matrix_x = [[] for _ in range(len(x))]
     matrix_y = [[] for _ in range(len(y))]
     for i in range(len(y)):
@@ -12,5 +12,4 @@ def matrix_generator(x,y,e,d):
     for i in range(len(matrix_x)):
         for j in range(len(matrix_x[i])):
             matrix[i].append((matrix_x[i][j], matrix_y[i][j]))
-
     return matrix, matrix_x, matrix_y
