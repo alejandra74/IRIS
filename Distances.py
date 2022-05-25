@@ -21,7 +21,7 @@ def mean_distance(matrix_x, matrix):
                 iu = np.triu_indices(n - 1)
                 arr2 = []
                 for j in arr[iu]:
-                    if j > 10:
+                    if j > 5:
                         arr2.append(j)
                 if not arr2 == []:
                     a = np.mean(arr2)
@@ -31,5 +31,8 @@ def mean_distance(matrix_x, matrix):
         else:
             d_landmk[i].append(0)
             media.append(0)
+
+    while len(media) != len(matrix_x):
+        media.append(0)
 
     return media
